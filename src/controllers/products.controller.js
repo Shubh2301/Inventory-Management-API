@@ -102,9 +102,9 @@ async function updateProductController(req, res) {
             category,
             price,
             quantity
-        },{
-            new:true,
-            runValidators:true
+        }, {
+            new: true,
+            runValidators: true
         }
         );
 
@@ -128,39 +128,49 @@ async function updateProductController(req, res) {
 }
 
 
-async function updateStockController(req,res){
-    const{quantity,type}=req.body;
-      const {id}=req.params;
-    const product=await productModel.findById(id);
+async function updateStockController(req, res) {
+    try {
+        const { quantity, type } = req.body;
+        const { id } = req.params;
+        const product = await productModel.findById(id);
 
-    if(!product){
-        return res.status(404).json({
-            message:"Product not found"
-        })
-    }
-
-    if(type==="IN"){
-        product.quantity+=quantity
-    }else if(type==="OUT"){
-        if(quantity>product.quantity){
-            return res.status(400).json({
-                message:"Insufficient stock"
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
             })
         }
-        product.quantity-=quantity
-    }else{
-        return res.status(400).json({
-            message:"Invalid stock type"
+
+        if (type === "IN") {
+            product.quantity += quantity
+        } else if (type === "OUT") {
+            if (quantity > product.quantity) {
+                return res.status(400).json({
+                    message: "Insufficient stock"
+                })
+            }
+            product.quantity -= quantity
+        } else {
+            return res.status(400).json({
+                message: "Invalid stock type"
+            })
+        }
+
+        await product.save();
+
+        return res.status(200).json({
+            message: "Stock updated successfully"
         })
     }
-
-    await product.save();
-
-    return res.status(200).json({
-        message:"Stock updated successfully"
-    })
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            message: "Internal server error"
+        })
+    }
 }
 
 
-module.exports = { createProductController, getProductController, 
-getSingleProductController,deleteProductController, updateProductController,updateStockController }
+module.exports = {
+    createProductController, getProductController,
+    getSingleProductController, deleteProductController, updateProductController, updateStockController
+}
