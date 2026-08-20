@@ -1,6 +1,6 @@
 const express=require('express')
 const authMiddleware=require('../middleware/auth.middleware')
-const {createProductController,getProductController,getSingleProductController,deleteProductController,updateProductController}=require('../controllers/products.controller')
+const {createProductController,getProductController,getSingleProductController,deleteProductController,updateProductController,updateStockController}=require('../controllers/products.controller')
 
 
 const router=express.Router();
@@ -22,7 +22,8 @@ router.delete('/:id',authMiddleware,deleteProductController)
 //update product
 router.patch('/:id',authMiddleware,updateProductController)
 
-
+//update stock
+router.patch('/:id/stock',authMiddleware,updateStockController)
 
 
 module.exports=router;

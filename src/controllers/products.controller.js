@@ -128,4 +128,39 @@ async function updateProductController(req, res) {
 }
 
 
-module.exports = { createProductController, getProductController, getSingleProductController, deleteProductController, updateProductController }
+async function updateStockController(req,res){
+    const{quantity,type}=req.body;
+      const {id}=req.params;
+    const product=await productModel.findById(id);
+
+    if(!product){
+        return res.status(404).json({
+            message:"Product not found"
+        })
+    }
+
+    if(type==="IN"){
+        product.quantity+=quantity
+    }else if(type==="OUT"){
+        if(quantity>product.quantity){
+            return res.status(400).json({
+                message:"Insufficient stock"
+            })
+        }
+        product.quantity-=quantity
+    }else{
+        return res.status(400).json({
+            message:"Invalid stock type"
+        })
+    }
+
+    await product.save();
+
+    return res.status(200).json({
+        message:"Stock updated successfully"
+    })
+}
+
+
+module.exports = { createProductController, getProductController, 
+getSingleProductController,deleteProductController, updateProductController,updateStockController }
