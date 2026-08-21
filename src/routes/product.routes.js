@@ -1,7 +1,7 @@
 const express=require('express')
 const authMiddleware=require('../middleware/auth.middleware')
 const {createProductController,getProductController,getSingleProductController,deleteProductController,updateProductController,updateStockController}=require('../controllers/products.controller')
-
+const rateLimmiter=require('../middleware/rateLimmiting.middleware')
 
 const router=express.Router();
 
@@ -10,11 +10,11 @@ const router=express.Router();
 router.post("/",authMiddleware,createProductController)
 
 //get products
-router.get('/',authMiddleware,getProductController)
+router.get('/',rateLimmiter,authMiddleware,getProductController)
 
 
 //get single product
-router.get('/:id',authMiddleware,getSingleProductController)
+router.get('/:id',rateLimmiter,authMiddleware,getSingleProductController)
 
 //delete product
 router.delete('/:id',authMiddleware,deleteProductController)
